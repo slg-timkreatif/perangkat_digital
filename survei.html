@@ -1,663 +1,765 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survei Eksplorasi Perangkat Digital</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { primary: '#0ea5e9', surface: '#f8fafc' }
-                }
-            }
-        }
-    </script>
-    
-    <script src="https://unpkg.com/lucide@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eksplorasi Perangkat Digital</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <style>
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-        .radio-custom:checked + label {
-            background-color: #e0f2fe;
-            border-color: #0ea5e9;
-            color: #0369a1;
-            font-weight: 600;
+  <!-- MD3 Theme Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+          colors: {
+            brand: {
+              50: '#f0f9ff', 100: '#e0f2fe', 200: '#bae6fd',
+              500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e'
+            },
+            surface: { DEFAULT: '#ffffff', dim: '#f8fafc', variant: '#f1f5f9' }
+          },
+          boxShadow: {
+            'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+            'glow': '0 0 20px rgba(14, 165, 233, 0.15)'
+          }
         }
-    </style>
+      }
+    }
+  </script>
+
+  <style>
+    body { background-color: #f8fafc; -webkit-font-smoothing: antialiased; }
+    
+    .card { background: white; border-radius: 24px; border: 1px solid rgba(0,0,0,0.03); box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05); transition: all 0.3s ease; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px -4px rgba(0,0,0,0.08); }
+    
+    .btn-primary { 
+      background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); 
+      color: white; border-radius: 16px; padding: 14px 28px; font-weight: 600; 
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      transition: all 0.2s; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(14, 165, 233, 0.4); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    
+    .btn-secondary {
+      background: white; border: 1.5px solid #e2e8f0; color: #475569; border-radius: 16px; 
+      padding: 14px 28px; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; transition: all 0.2s;
+    }
+    .btn-secondary:hover { border-color: #cbd5e1; background: #f8fafc; }
+
+    .input-modern {
+      width: 100%; padding: 16px 20px; background: #f8fafc; border: 2px solid transparent;
+      border-radius: 16px; font-size: 16px; transition: all 0.2s; outline: none;
+    }
+    .input-modern:focus { background: white; border-color: #0ea5e9; box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1); }
+
+    .chip { 
+      padding: 12px 16px; border-radius: 12px; border: 1.5px solid #e2e8f0; 
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .chip:hover { background: #f1f5f9; }
+    .chip.active-BM { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+    .chip.active-CM { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .chip.active-SM { background: #dcfce7; border-color: #22c55e; color: #166534; }
+
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    .acc-body.open { max-height: 5000px; }
+
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .spinner { width: 24px; height: 24px; border: 3px solid #e2e8f0; border-top-color: #0ea5e9; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
-<body class="bg-[#ECF5FE] text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="text-slate-800 min-h-screen selection:bg-brand-100">
 
-    <!-- HEADER DIPERBAIKI AGAR MUNCUL DI HP -->
-    <header class="bg-white sticky top-0 z-50 shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-2 sm:gap-3">
-                <i data-lucide="monitor-smartphone" class="w-6 h-6 sm:w-8 sm:h-8 text-primary shrink-0"></i>
-                <h1 class="text-base sm:text-xl font-bold text-slate-700 leading-tight">Eksplorasi Perangkat Digital</h1>
-            </div>
-            <div id="userBadge" class="hidden flex items-center gap-2 bg-slate-100 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium shrink-0 ml-2">
-                <i data-lucide="user" class="w-3 h-3 sm:w-4 sm:h-4"></i>
-                <span id="badgeNama" class="truncate max-w-[80px] sm:max-w-[150px]">Guru</span>
-            </div>
+  <!-- ================= SCREEN: LOGIN ================= -->
+  <div id="screenLogin" class="min-h-screen flex items-center justify-center p-4 fade-in">
+    <div class="card p-8 w-full max-w-[420px] text-center">
+      <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <i data-lucide="tablet-smartphone" class="w-8 h-8"></i>
+      </div>
+      <h1 class="text-2xl font-bold mb-2 text-slate-900">Eksplorasi Perangkat Digital</h1>
+      <p class="text-slate-500 mb-8 text-sm">Masuk untuk melanjutkan asesmen kompetensi Anda</p>
+
+      <div class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Email Terdaftar</label>
+          <input type="email" id="loginEmail" class="input-modern" placeholder="nama@sekolah.sch.id">
         </div>
-    </header>
+        <button onclick="handleLogin()" class="btn-primary w-full mt-2">
+          Masuk Dashboard <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </div>
 
-    <main class="flex-1 w-full max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
-        
-        <!-- SECTION 1: LOGIN -->
-        <section id="loginSection" class="fade-in bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] p-6 sm:p-10 max-w-md mx-auto mt-10 sm:mt-20 border border-slate-100">
-            <div class="text-center mb-8">
-                <div class="bg-blue-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="mail" class="w-8 h-8 text-primary"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800">Selamat Datang</h2>
-                <p class="text-slate-500 mt-2 text-sm">Masukkan email terdaftar Anda untuk memulai atau melanjutkan survei.</p>
+      <div class="mt-8 pt-6 border-t border-slate-100">
+        <p class="text-xs text-slate-400">Belum terdaftar? <button onclick="showScreen('screenRegister')" class="text-brand-600 font-semibold hover:underline">Daftar Akun Baru</button></p>
+      </div>
+      
+      <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 text-sm p-3 rounded-xl flex items-center gap-2">
+        <i data-lucide="circle-alert" class="w-4 h-4"></i> <span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: REGISTER ================= -->
+  <div id="screenRegister" class="min-h-screen flex items-center justify-center p-4 hidden">
+    <div class="card p-8 w-full max-w-[500px]">
+      <div class="flex items-center gap-3 mb-6">
+        <button onclick="showScreen('screenLogin')" class="p-2 hover:bg-slate-100 rounded-full"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+        <h2 class="text-xl font-bold">Registrasi Peserta</h2>
+      </div>
+      <div class="space-y-4">
+        <input type="email" id="regEmail" class="input-modern" placeholder="Email *">
+        <input type="text" id="regNama" class="input-modern" placeholder="Nama Lengkap *">
+        <input type="text" id="regInstansi" class="input-modern" placeholder="Asal Sekolah *">
+        <select id="regJabatan" class="input-modern bg-white">
+          <option value="Guru">Guru</option>
+          <option value="Kepala Sekolah">Kepala Sekolah</option>
+          <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
+        </select>
+        <div class="grid grid-cols-3 gap-3">
+          <input type="text" id="regKecamatan" class="input-modern" placeholder="Kecamatan">
+          <input type="text" id="regKabupaten" class="input-modern" placeholder="Kab/Kota">
+          <input type="text" id="regProvinsi" class="input-modern" placeholder="Provinsi">
+        </div>
+        <div class="pt-4 flex gap-3">
+          <button onclick="showScreen('screenLogin')" class="btn-secondary flex-1">Batal</button>
+          <button onclick="handleRegister()" class="btn-primary flex-1">Daftar Sekarang</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCREEN: DASHBOARD ================= -->
+  <div id="screenDashboard" class="min-h-screen p-4 md:p-8 hidden">
+    <div class="max-w-4xl mx-auto fade-in">
+      
+      <!-- Sapaan Resmi -->
+      <div class="mb-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight" id="dashGreeting">-</h1>
+        <p class="text-slate-500 mt-1">Selamat datang di Portal Asesmen Kompetensi Digital</p>
+      </div>
+
+      <!-- Card Identitas Resmi -->
+      <div class="card p-0 mb-8 overflow-hidden border-l-4 border-l-brand-600">
+        <div class="p-6 flex flex-col md:flex-row items-start md:items-center gap-5">
+          <div class="w-14 h-14 bg-brand-50 text-brand-700 rounded-full flex items-center justify-center shrink-0 text-xl font-bold border-2 border-brand-100" id="dashInitial">-</div>
+          <div class="flex-1 space-y-1">
+            <h2 class="text-lg font-bold text-slate-900" id="dashName">-</h2>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600">
+              <span class="flex items-center gap-1.5"><i data-lucide="school" class="w-3.5 h-3.5 text-brand-500"></i> <span id="dashSchool">-</span></span>
+              <span class="flex items-center gap-1.5"><i data-lucide="briefcase" class="w-3.5 h-3.5 text-brand-500"></i> <span id="dashJabatan">-</span></span>
+              <span class="flex items-center gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand-500"></i> <span id="dashWilayah">-</span></span>
             </div>
-            <div class="space-y-4">
-                <input type="email" id="emailInput" placeholder="contoh@sekolah.id" required class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary transition-all">
-                <button onclick="cekEmail()" id="btnLanjut" class="w-full bg-primary hover:bg-sky-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2">
-                    <span>Lanjut</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-                <div id="loginStatus" class="text-center text-sm font-medium mt-3"></div>
+          </div>
+          <button onclick="logout()" class="btn-secondary !py-2 !px-4 text-sm shrink-0">
+            <i data-lucide="log-out" class="w-4 h-4"></i> Keluar
+          </button>
+        </div>
+      </div>
+
+      <!-- Status Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Card Survei Awal -->
+        <div class="card p-6 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
+            <i data-lucide="clipboard-check" class="w-24 h-24 text-brand-600"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-lg">Survei Awal</h3>
             </div>
-        </section>
+            <p class="text-sm text-slate-500 mb-6">Asesmen kompetensi dasar penggunaan perangkat digital.</p>
+            <div id="dashAwalActions" class="flex gap-3"></div>
+          </div>
+        </div>
 
-        <!-- SECTION 2: REGISTRASI -->
-        <section id="registerSection" class="hidden fade-in bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] p-6 sm:p-10 max-w-md mx-auto mt-10 sm:mt-20 border border-slate-100">
-            <div class="text-center mb-6">
-                <div class="bg-emerald-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="user-plus" class="w-8 h-8 text-emerald-500"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-slate-800">Buat Akun Baru</h2>
-                <p class="text-slate-500 mt-2 text-sm">Email Anda belum terdaftar. Lengkapi profil di bawah ini untuk melanjutkan.</p>
+        <!-- Card Survei Akhir -->
+        <div class="card p-6 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition">
+            <i data-lucide="award" class="w-24 h-24 text-green-600"></i>
+          </div>
+          <div class="relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                <i data-lucide="trending-up" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-lg">Survei Akhir</h3>
             </div>
-            
-            <div class="space-y-4">
-                <input type="email" id="regEmail" disabled class="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-500 font-medium">
-                <input type="text" id="regNama" placeholder="Nama Lengkap" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="text" id="regInstansi" placeholder="Asal Satuan Pendidikan" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary">
-                
-                <select id="regJabatan" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary bg-white text-slate-600">
-                    <option value="">-- Pilih Jabatan --</option>
-                    <option value="Guru">Guru</option>
-                    <option value="Kepala Sekolah">Kepala Sekolah</option>
-                    <option value="Tenaga Kependidikan">Tenaga Kependidikan</option>
-                </select>
-                
-                <input type="text" id="regKecamatan" placeholder="Kecamatan" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="text" id="regKabupaten" placeholder="Kabupaten/Kota" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary">
-                <input type="text" id="regProvinsi" placeholder="Provinsi" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-primary">
-                
-                <button onclick="simpanAkun()" id="btnDaftar" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors flex justify-center items-center gap-2 mt-2">
-                    <span>Daftar & Mulai Survei</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
-                <div id="regStatus" class="text-center text-sm font-medium mt-3"></div>
-            </div>
-        </section>
+            <p class="text-sm text-slate-500 mb-6">Evaluasi peningkatan kompetensi setelah pendampingan.</p>
+            <div id="dashAkhirActions" class="flex gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- SECTION 3: INSTRUMEN SURVEI -->
-        <section id="surveySection" class="hidden fade-in space-y-6">
-            <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-800">Lembar Kerja Eksplorasi</h2>
-                    <p class="text-slate-500 text-sm mt-1">Fase Pengisian: <span id="labelFase" class="font-bold text-primary">Survei Awal</span></p>
-                </div>
-                <div class="bg-amber-50 text-amber-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2">
-                    <i data-lucide="info" class="w-4 h-4"></i>
-                    <span>Jawab sesuai tingkat penguasaan Anda</span>
-                </div>
-            </div>
+  <!-- ================= SCREEN: SURVEI ================= -->
+  <div id="screenSurvey" class="min-h-screen pb-20 hidden">
+    <div class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 py-3">
+      <div class="max-w-3xl mx-auto flex justify-between items-center">
+        <button onclick="confirmBackToDashboard()" class="p-2 hover:bg-slate-100 rounded-full text-slate-600"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+        <div class="text-center">
+          <h2 class="font-bold text-sm md:text-base" id="surveyTitle">Survei</h2>
+          <div class="text-[10px] text-slate-500 font-medium" id="progressText">0/79</div>
+        </div>
+        <div class="w-9"></div>
+      </div>
+      <div class="max-w-3xl mx-auto mt-2">
+        <div class="w-full bg-slate-100 rounded-full h-1.5">
+          <div id="progressBar" class="bg-brand-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+        </div>
+        <p id="autoSaveIndicator" class="text-[10px] text-slate-400 text-center mt-1 hidden">
+          <i data-lucide="save" class="w-3 h-3 inline"></i> Tersimpan otomatis
+        </p>
+      </div>
+    </div>
 
-            <div id="accordionContainer" class="space-y-4"></div>
+    <div class="max-w-3xl mx-auto p-4 space-y-4 mt-2">
+      <div id="surveyContainer"></div>
 
-            <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8 border border-slate-100 mt-8">
-                <div class="flex items-center gap-3 mb-6 border-b pb-4">
-                    <i data-lucide="book-open-check" class="w-6 h-6 text-primary"></i>
-                    <h3 class="text-xl font-bold text-slate-800">Bahan Refleksi Diri</h3>
-                </div>
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">1. Pemahaman Baru: Apa satu hal paling mendasar yang baru Anda pahami?</label>
-                        <textarea id="refleksi1" rows="3" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">2. Prioritas Perbaikan: Kelompok fitur mana yang akan segera Anda pelajari kembali?</label>
-                        <textarea id="refleksi2" rows="3" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">3. Komitmen Langkah Pertama: Apa tindakan nyata Anda dalam dua minggu kedepan?</label>
-                        <textarea id="refleksi3" rows="3" class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:outline-none"></textarea>
-                    </div>
-                </div>
-            </div>
+      <div class="card p-6 mt-6">
+        <h3 class="font-bold text-lg mb-4 flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-brand-500"></i> Refleksi Diri</h3>
+        <div class="space-y-4">
+          <textarea id="refleksi1" class="input-modern resize-none" rows="3" placeholder="1. Pemahaman baru apa yang Anda peroleh?"></textarea>
+          <textarea id="refleksi2" class="input-modern resize-none" rows="3" placeholder="2. Fitur apa yang jadi prioritas dipelajari?"></textarea>
+          <textarea id="refleksi3" class="input-modern resize-none" rows="3" placeholder="3. Komitmen tindakan nyata 2 minggu ke depan?"></textarea>
+        </div>
+      </div>
 
-            <div class="flex justify-end pt-4 pb-10">
-                <button onclick="kirimSurvei()" id="btnKirim" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg shadow-emerald-200 transition-all flex items-center gap-2">
-                    <i data-lucide="send" class="w-5 h-5"></i>
-                    <span>Kirim & Simpan Data</span>
-                </button>
-            </div>
-        </section>
+      <button onclick="handleSubmitSurvey()" id="btnSubmitSurvey" class="btn-primary w-full py-4 text-lg mt-4">
+        <i data-lucide="send" class="w-5 h-5"></i> Kirim Jawaban
+      </button>
+    </div>
+  </div>
 
-    </main>
+  <!-- Hidden Elements -->
+  <div id="pdfContainer" style="display:none;"></div>
+  <div id="loadingOverlay" class="fixed inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-50 hidden">
+    <div class="spinner mb-4"></div>
+    <p id="loadingText" class="text-slate-600 font-semibold">Memproses...</p>
+  </div>
 
-    <script>
-        lucide.createIcons();
+<script>
+// ================================================================
+//  INIT & CONFIG
+// ================================================================
+document.addEventListener('DOMContentLoaded', () => lucide.createIcons());
+const refreshIcons = () => setTimeout(() => lucide.createIcons(), 50);
 
-        // ---------------------------------------------------------
-        // !!! MASUKKAN URL WEB APP GOOGLE APPS SCRIPT DI SINI !!!
-        // ---------------------------------------------------------
-        const GAS_API_URL = 'https://script.google.com/macros/s/AKfycbywCy8apBc2L_yUyf2T0162tgZgas5YeB4lXbZl7taVs9sh_SToMonf9mQ5CLs1N4tDDg/exec';
+const GAS_URL = "https://script.google.com/macros/s/AKfycbywCy8apBc2L_yUyf2T0162tgZgas5YeB4lXbZl7taVs9sh_SToMonf9mQ5CLs1N4tDDg/exec";
+const APP_SECRET = "SURVEI_DIGITAL_2025";
 
-        const dataInstrumen = [
-            {
-                kategori: "A. Fitur Interaksi Sentuh (Touch Interaction)",
-                pertanyaan: [
-                    "Multi-touch 5 titik sentuh secara bersamaan",
-                    "Penulisan menggunakan jari",
-                    "Penulisan menggunakan stylus",
-                    "Palm Erase (menghapus menggunakan telapak tangan)",
-                    "Talkback (untuk pembelajaran inklusif)",
-                    "Zoom In dan Zoom Out menggunakan sentuhan",
-                    "Drag and Drop objek",
-                    "Rotasi objek menggunakan sentuhan"
-                ]
-            },
-            {
-                kategori: "B. Fitur Whiteboard Digital",
-                pertanyaan: [
-                    "Papan tulis digital",
-                    "Penulisan bebas (Free Writing)",
-                    "Pilihan warna pena",
-                    "Pilihan ketebalan pena",
-                    "Highlighter digital",
-                    "Penghapus digital",
-                    "Pengelolaan beberapa halaman whiteboard",
-                    "Penyisipan gambar ke dalam whiteboard",
-                    "Penyisipan bentuk geometri",
-                    "Fitur catatan (notes)"
-                ]
-            },
-            {
-                kategori: "C. Fitur Alat Matematika dan Geometri",
-                pertanyaan: [
-                    "Penggaris digital",
-                    "Busur derajat digital",
-                    "Segitiga siku-siku digital",
-                    "Segitiga sama kaki digital",
-                    "Busur derajat digital (tambahan)",
-                    "Pengukuran panjang",
-                    "Pengukuran sudut",
-                    "Pembuatan bangun datar",
-                    "Pembuatan bangun geometri secara otomatis"
-                ]
-            },
-            {
-                kategori: "D. Fitur Anotasi dan Penandaan",
-                pertanyaan: [
-                    "Menulis di atas dokumen",
-                    "Menulis di atas presentasi",
-                    "Menulis di atas gambar",
-                    "Menulis di atas video",
-                    "Highlight konten",
-                    "Memberi tanda atau catatan pada materi",
-                    "Menyimpan hasil anotasi"
-                ]
-            },
-            {
-                kategori: "E. Fitur Konektivitas Laptop dan Perangkat Lain",
-                pertanyaan: [
-                    "Koneksi HDMI",
-                    "Koneksi USB",
-                    "Koneksi Type-C",
-                    "Wireless Screen Sharing",
-                    "Mirroring layar laptop",
-                    "Mirroring layar smartphone",
-                    "Touch Back Control (mengendalikan laptop dari PID)",
-                    "Dual Screen Display",
-                    "Extended Display",
-                    "Duplicate Display"
-                ]
-            },
-            {
-                kategori: "F. Fitur Presentasi dan Pembelajaran",
-                pertanyaan: [
-                    "Presentasi interaktif",
-                    "Tampilan layar penuh",
-                    "Multi-window display",
-                    "Picture in Picture",
-                    "Presentasi multimedia",
-                    "Penayangan video pembelajaran",
-                    "Penayangan simulasi pembelajaran",
-                    "Penayangan sumber belajar digital"
-                ]
-            },
-            {
-                kategori: "G. Fitur Kolaborasi dan Eksplorasi",
-                pertanyaan: [
-                    "Kolaborasi multi-pengguna",
-                    "Penulisan bersama pada layar",
-                    "Diskusi kelompok menggunakan whiteboard",
-                    "Berbagi tampilan ke perangkat lain",
-                    "Kolaborasi antar perangkat"
-                ]
-            },
-            {
-                kategori: "H. Fitur Pengelolaan Dokumen",
-                pertanyaan: [
-                    "Membuka file PDF",
-                    "Membuka file Docs",
-                    "Membuka file PowerPoint",
-                    "Membuka file Slide",
-                    "Menampilkan gambar",
-                    "Menampilkan video",
-                    "Menampilkan audio",
-                    "Menyimpan hasil pekerjaan",
-                    "Ekspor ke PDF",
-                    "Ekspor ke gambar"
-                ]
-            },
-            {
-                kategori: "I. Fitur Media Penyimpanan Eksternal",
-                pertanyaan: [
-                    "Membaca flashdisk",
-                    "Membaca SSD atau hardisk eksternal",
-                    "Menyalin file antar media",
-                    "Membuka konten pembelajaran dari media eksternal",
-                    "Menyimpan hasil kerja ke media eksternal"
-                ]
-            },
-            {
-                kategori: "J. Fitur Pendukung Supervisi Pembelajaran",
-                pertanyaan: [
-                    "Observasi penggunaan media digital",
-                    "Dokumentasi aktivitas pembelajaran",
-                    "Penyimpanan hasil pembelajaran",
-                    "Analisis tingkat interaktivitas pembelajaran",
-                    "Pemantauan keterlibatan peserta didik",
-                    "Pemanfaatan platform pembelajaran interaktif",
-                    "Integrasi berbagai sumber belajar digital"
-                ]
+// Fallback lokal (digunakan jika fetch instrumen dari server gagal)
+const INSTRUMEN_FALLBACK = [
+  { kategori: "A. Fitur Interaksi Sentuh", items: ["Multi-touch 5 titik sentuh","Penulisan jari","Penulisan stylus","Palm Erase","Talkback","Zoom In/Out sentuhan","Drag and Drop","Rotasi objek"] },
+  { kategori: "B. Whiteboard Digital", items: ["Papan tulis digital","Free Writing","Pilihan warna pena","Ketebalan pena","Highlighter","Penghapus digital","Multi-halaman","Sisip gambar","Bentuk geometri","Fitur cahaya"] },
+  { kategori: "C. Alat Matematika", items: ["Penggaris digital","Busur derajat","Segitiga siku-siku","Segitiga sama kaki","Busur derajat digital","Ukur panjang","Ukur sudut","Bangun datar","Geometri otomatis"] },
+  { kategori: "D. Anotasi", items: ["Tulis di dokumen","Tulis di presentasi","Tulis di gambar","Tulis di video","Highlight konten","Catatan materi","Simpan anotasi"] },
+  { kategori: "E. Konektivitas", items: ["HDMI","USB","Type-C","Wireless Sharing","Mirroring Laptop","Mirroring HP","Touch Back Control","Dual Screen","Extended Display","Duplicate Display"] },
+  { kategori: "F. Presentasi", items: ["Presentasi interaktif","Fullscreen","Multi-window","Picture in Picture","Multimedia","Video pembelajaran","Simulasi","Sumber belajar digital"] },
+  { kategori: "G. Kolaborasi", items: ["Multi-pengguna","Tulis bersama","Diskusi whiteboard","Berbagi tampilan","Kolaborasi antar perangkat"] },
+  { kategori: "H. Dokumen", items: ["Buka PDF","Buka Docs","Buka PPT","Buka Slide","Tampil gambar","Tampil video","Tampil audio","Simpan kerja","Ekspor PDF","Ekspor Gambar"] },
+  { kategori: "I. Media Eksternal", items: ["Baca Flashdisk","Baca SSD/HDD","Salin file","Buka konten eksternal","Simpan ke eksternal"] },
+  { kategori: "J. Supervisi", items: ["Observasi media","Dokumentasi aktivitas","Simpan hasil","Analisis interaktivitas","Pantau keterlibatan","Platform interaktif","Integrasi sumber belajar"] }
+];
+const TOTAL_ITEM = 79;
+
+// State
+let currentUser = null, fullData = null, jawaban = {}, currentFase = "";
+let pdfInstrumen = null;
+
+// ================================================================
+//  AUTO-SAVE KE LOCALSTORAGE
+// ================================================================
+const STORAGE_KEY_PREFIX = "survei_digital_";
+
+function getStorageKey() {
+  if (!currentUser || !currentFase) return null;
+  return STORAGE_KEY_PREFIX + currentUser.email + "_" + currentFase.replace(/\s/g, "_");
+}
+
+function saveToLocal() {
+  const key = getStorageKey();
+  if (!key) return;
+  const draft = {
+    jawaban: jawaban,
+    refleksi1: document.getElementById("refleksi1")?.value || "",
+    refleksi2: document.getElementById("refleksi2")?.value || "",
+    refleksi3: document.getElementById("refleksi3")?.value || "",
+    savedAt: new Date().toISOString()
+  };
+  try { localStorage.setItem(key, JSON.stringify(draft)); } catch(e) {}
+  
+  const indicator = document.getElementById("autoSaveIndicator");
+  if (indicator) { indicator.classList.remove("hidden"); setTimeout(() => indicator.classList.add("hidden"), 2000); }
+}
+
+function loadFromLocal() {
+  const key = getStorageKey();
+  if (!key) return false;
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return false;
+    const draft = JSON.parse(raw);
+    if (draft.jawaban && Object.keys(draft.jawaban).length > 0) {
+      jawaban = draft.jawaban;
+      if (draft.refleksi1) document.getElementById("refleksi1").value = draft.refleksi1;
+      if (draft.refleksi2) document.getElementById("refleksi2").value = draft.refleksi2;
+      if (draft.refleksi3) document.getElementById("refleksi3").value = draft.refleksi3;
+      
+      setTimeout(() => {
+        for (const [idx, val] of Object.entries(jawaban)) {
+          const buttons = document.querySelectorAll(`button[onclick*="setAns(${idx},"]`);
+          buttons.forEach(b => {
+            if (b.getAttribute("onclick").includes(`'${val}'`)) {
+              b.classList.add("active-" + val);
             }
-        ];
-
-        let stateEmail = "";
-        let stateFase = "Survei Awal";
-        let noUrutGlobal = 1;
-
-        function renderInstrumenUI() {
-            const container = document.getElementById('accordionContainer');
-            container.innerHTML = ''; 
-            noUrutGlobal = 1;
-
-            dataInstrumen.forEach((kat, indexKat) => {
-                let htmlPertanyaan = '';
-                kat.pertanyaan.forEach((tanya) => {
-                    const idRadio = `Q${noUrutGlobal}`;
-                    htmlPertanyaan += `
-                        <div class="py-4 border-b border-slate-100 last:border-0">
-                            <p class="text-sm sm:text-base text-slate-700 font-medium mb-3">${noUrutGlobal}. ${tanya}</p>
-                            <div class="grid grid-cols-3 gap-2 sm:gap-4">
-                                <div>
-                                    <input type="radio" name="${idRadio}" id="${idRadio}_BM" value="BM" class="radio-custom hidden">
-                                    <label for="${idRadio}_BM" class="block text-center p-2 rounded-lg border border-slate-200 text-xs sm:text-sm cursor-pointer transition-all hover:bg-slate-50 text-slate-500">Belum Mampu</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="${idRadio}" id="${idRadio}_CM" value="CM" class="radio-custom hidden">
-                                    <label for="${idRadio}_CM" class="block text-center p-2 rounded-lg border border-slate-200 text-xs sm:text-sm cursor-pointer transition-all hover:bg-slate-50 text-slate-500">Cukup Mampu</label>
-                                </div>
-                                <div>
-                                    <input type="radio" name="${idRadio}" id="${idRadio}_SM" value="SM" class="radio-custom hidden">
-                                    <label for="${idRadio}_SM" class="block text-center p-2 rounded-lg border border-slate-200 text-xs sm:text-sm cursor-pointer transition-all hover:bg-slate-50 text-slate-500">Sangat Mampu</label>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    noUrutGlobal++;
-                });
-
-                const isOpen = indexKat === 0 ? 'open' : '';
-                const accordionHTML = `
-                    <details class="bg-white rounded-2xl shadow-sm border border-slate-100 group" ${isOpen}>
-                        <summary class="p-5 font-bold text-slate-800 cursor-pointer flex justify-between items-center hover:bg-slate-50 transition-colors rounded-2xl">
-                            <span>${kat.kategori}</span>
-                            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform"></i>
-                        </summary>
-                        <div class="px-5 pb-5 pt-2 border-t border-slate-100">
-                            ${htmlPertanyaan}
-                        </div>
-                    </details>
-                `;
-                container.innerHTML += accordionHTML;
-            });
-            lucide.createIcons();
+          });
         }
+        updateProg();
+      }, 100);
+      
+      const savedTime = draft.savedAt ? new Date(draft.savedAt).toLocaleTimeString("id-ID") : "";
+      showToast(`📝 Draft dipulihkan (${savedTime})`, "success");
+      return true;
+    }
+  } catch(e) {}
+  return false;
+}
 
-        async function cekEmail() {
-            const emailInput = document.getElementById('emailInput').value;
-            const statusDiv = document.getElementById('loginStatus');
-            const btn = document.getElementById('btnLanjut');
-            
-            if (!emailInput) {
-                statusDiv.innerText = "Mohon isi alamat email terlebih dahulu.";
-                statusDiv.className = "text-center text-sm font-medium mt-3 text-red-500";
-                return;
-            }
+function clearLocalDraft() {
+  const key = getStorageKey();
+  if (key) { try { localStorage.removeItem(key); } catch(e) {} }
+}
 
-            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Memeriksa...</span>`;
-            statusDiv.innerText = "";
-            lucide.createIcons();
+// ================================================================
+//  API WRAPPER
+// ================================================================
+function apiCall(p) {
+  p.secret = APP_SECRET;
+  return fetch(GAS_URL, {
+    method: "POST", mode: "cors", redirect: "follow",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(p)
+  })
+  .then(r => r.text())
+  .then(t => { try { return JSON.parse(t); } catch(e) { throw new Error("Invalid JSON"); } });
+}
 
-            try {
-                const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ action: 'cekEmail', email: emailInput })
-                });
-
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    if (result.data.terdaftar) {
-                        
-                        // JIKA SUDAH SELESAI SEMUA: TAMPILKAN RAPOR PERBANDINGAN & DATA PESERTA
-                        if (result.data.fase === "Selesai") {
-                            const sAwal = result.data.skorAwal;
-                            const sAkhir = result.data.skorAkhir;
-                            const user = result.data.userData;
-                            
-                            // Hitung Delta
-                            const deltaSM = sAkhir.SM - sAwal.SM;
-                            const deltaCM = sAkhir.CM - sAwal.CM;
-                            const deltaBM = sAkhir.BM - sAwal.BM;
-                            
-                            document.getElementById('loginSection').innerHTML = `
-                                <div class="text-center fade-in w-full max-w-2xl mx-auto">
-                                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <i data-lucide="bar-chart-2" class="w-8 h-8 text-primary"></i>
-                                    </div>
-                                    <h2 class="text-2xl font-bold text-slate-800">Rapor Peningkatan Kompetensi</h2>
-                                    <p class="text-slate-500 mt-2 text-sm">Berikut adalah perbandingan tingkat penguasaan perangkat digital Anda.</p>
-                                    
-                                    <!-- KOTAK DATA PESERTA -->
-                                    <div class="bg-slate-50 p-4 sm:p-5 rounded-xl border border-slate-200 mt-6 mb-8 text-left">
-                                        <h3 class="font-bold text-slate-800 mb-3 border-b border-slate-200 pb-2 flex items-center gap-2">
-                                            <i data-lucide="contact" class="w-4 h-4 text-primary"></i> Data Peserta
-                                        </h3>
-                                        <div class="grid grid-cols-[100px_auto] sm:grid-cols-[120px_auto] gap-y-2 text-sm text-slate-600">
-                                            <div class="font-semibold text-slate-700">Nama</div>
-                                            <div>: ${user.nama}</div>
-                                            <div class="font-semibold text-slate-700">Instansi</div>
-                                            <div>: ${user.instansi}</div>
-                                            <div class="font-semibold text-slate-700">Jabatan</div>
-                                            <div>: ${user.jabatan}</div>
-                                            <div class="font-semibold text-slate-700">Wilayah</div>
-                                            <div>: ${user.kecamatan}, ${user.kabupaten}, ${user.provinsi}</div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- TABEL SKOR -->
-                                    <div class="grid grid-cols-3 gap-2 sm:gap-4 text-center">
-                                        <div class="font-bold text-slate-500 text-xs sm:text-sm flex items-end justify-center pb-2 border-b border-slate-200">Indikator</div>
-                                        <div class="font-bold text-slate-500 text-xs sm:text-sm flex items-end justify-center pb-2 border-b border-slate-200">Survei Awal</div>
-                                        <div class="font-bold text-slate-500 text-xs sm:text-sm flex items-end justify-center pb-2 border-b border-slate-200">Survei Akhir</div>
-
-                                        <!-- Baris Sangat Mampu -->
-                                        <div class="font-bold text-emerald-600 flex items-center justify-center text-xs sm:text-sm">Sangat Mampu</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-slate-50 rounded-lg p-2 border border-slate-100">${sAwal.SM}</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-emerald-50 rounded-lg p-2 text-emerald-600 flex flex-col items-center justify-center border border-emerald-100">
-                                            <span>${sAkhir.SM}</span>
-                                            <span class="text-xs ${deltaSM >= 0 ? 'text-emerald-500' : 'text-red-500'}">(${deltaSM >= 0 ? '+' : ''}${deltaSM})</span>
-                                        </div>
-
-                                        <!-- Baris Cukup Mampu -->
-                                        <div class="font-bold text-amber-600 flex items-center justify-center text-xs sm:text-sm">Cukup Mampu</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-slate-50 rounded-lg p-2 border border-slate-100">${sAwal.CM}</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-amber-50 rounded-lg p-2 text-amber-600 flex flex-col items-center justify-center border border-amber-100">
-                                            <span>${sAkhir.CM}</span>
-                                            <span class="text-xs ${deltaCM >= 0 ? 'text-emerald-500' : 'text-red-500'}">(${deltaCM >= 0 ? '+' : ''}${deltaCM})</span>
-                                        </div>
-
-                                        <!-- Baris Belum Mampu -->
-                                        <div class="font-bold text-red-600 flex items-center justify-center text-xs sm:text-sm">Belum Mampu</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-slate-50 rounded-lg p-2 border border-slate-100">${sAwal.BM}</div>
-                                        <div class="text-lg sm:text-xl font-bold bg-red-50 rounded-lg p-2 text-red-600 flex flex-col items-center justify-center border border-red-100">
-                                            <span>${sAkhir.BM}</span>
-                                            <span class="text-xs ${deltaBM <= 0 ? 'text-emerald-500' : 'text-red-500'}">(${deltaBM <= 0 ? '' : '+'}${deltaBM})</span>
-                                        </div>
-                                    </div>
-                                    <button onclick="location.reload()" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-lg w-full sm:w-auto">Keluar</button>
-                                </div>
-                            `;
-                            // Sesuaikan lebar container saat rapor ditampilkan
-                            document.getElementById('loginSection').classList.remove('max-w-md');
-                            document.getElementById('loginSection').classList.add('max-w-2xl');
-                            lucide.createIcons();
-                            return; 
-                        }
-
-                        // JIKA BELUM SELESAI
-                        stateEmail = emailInput;
-                        stateFase = result.data.fase;
-                        
-                        document.getElementById('loginSection').classList.add('hidden');
-                        document.getElementById('surveySection').classList.remove('hidden');
-                        document.getElementById('userBadge').classList.remove('hidden');
-                        document.getElementById('badgeNama').innerText = result.data.userData.nama;
-                        document.getElementById('labelFase').innerText = stateFase;
-                        
-                        renderInstrumenUI();
-                    } else {
-                        document.getElementById('loginSection').classList.add('hidden');
-                        document.getElementById('registerSection').classList.remove('hidden');
-                        document.getElementById('regEmail').value = emailInput;
-                        lucide.createIcons();
-                    }
-                } else {
-                    statusDiv.innerText = "Terjadi kesalahan sistem.";
-                    statusDiv.className = "text-center text-sm font-medium mt-3 text-red-500";
-                    btn.innerHTML = `<span>Lanjut</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-                    lucide.createIcons();
-                }
-            } catch (error) {
-                statusDiv.innerText = "Gagal terhubung ke server. Periksa koneksi Anda.";
-                statusDiv.className = "text-center text-sm font-medium mt-3 text-red-500";
-                btn.innerHTML = `<span>Lanjut</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-                lucide.createIcons();
-            }
+// ================================================================
+//  FETCH INSTRUMEN DARI SERVER
+// ================================================================
+async function fetchInstrumen() {
+  if (pdfInstrumen) return pdfInstrumen;
+  try {
+    const res = await apiCall({ action: "getInstrumen" });
+    if (res.status === "success" && res.data && res.data.length > 0) {
+      const grouped = [];
+      let currentKat = "", currentItems = [];
+      res.data.forEach(row => {
+        if (row.kategori !== currentKat) {
+          if (currentKat !== "") grouped.push({ kategori: currentKat, items: [...currentItems] });
+          currentKat = row.kategori;
+          currentItems = [];
         }
+        if (row.item) currentItems.push(row.item);
+      });
+      if (currentKat !== "") grouped.push({ kategori: currentKat, items: [...currentItems] });
+      pdfInstrumen = grouped;
+      console.log("✅ Instrumen dimuat dari server:", pdfInstrumen.length, "kategori");
+      return pdfInstrumen;
+    }
+  } catch (e) {
+    console.warn("⚠️ Gagal fetch instrumen dari server, gunakan fallback lokal", e);
+  }
+  return null;
+}
 
-        async function simpanAkun() {
-            const btnDaftar = document.getElementById('btnDaftar');
-            const regStatus = document.getElementById('regStatus');
-            
-            const dataAkun = {
-                action: 'simpanAkun',
-                email: document.getElementById('regEmail').value,
-                nama: document.getElementById('regNama').value,
-                instansi: document.getElementById('regInstansi').value,
-                jabatan: document.getElementById('regJabatan').value,
-                kecamatan: document.getElementById('regKecamatan').value,
-                kabupaten: document.getElementById('regKabupaten').value,
-                provinsi: document.getElementById('regProvinsi').value
-            };
+// ================================================================
+//  UI HELPERS
+// ================================================================
+function showScreen(id) {
+  document.querySelectorAll('[id^="screen"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
+  refreshIcons();
+}
 
-            if (!dataAkun.nama || !dataAkun.instansi || !dataAkun.jabatan) {
-                regStatus.innerText = "Mohon lengkapi seluruh data wajib (Nama, Instansi, Jabatan).";
-                regStatus.className = "text-center text-sm font-medium mt-3 text-red-500";
-                return;
-            }
+function showLoading(t) {
+  document.getElementById("loadingText").textContent = t || "Memproses...";
+  document.getElementById("loadingOverlay").classList.remove("hidden");
+}
 
-            btnDaftar.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Memproses...</span>`;
-            regStatus.innerText = "";
-            lucide.createIcons();
+function hideLoading() {
+  document.getElementById("loadingOverlay").classList.add("hidden");
+}
 
-            try {
-                const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(dataAkun)
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    stateEmail = dataAkun.email;
-                    stateFase = "Survei Awal";
-                    
-                    document.getElementById('registerSection').classList.add('hidden');
-                    document.getElementById('surveySection').classList.remove('hidden');
-                    document.getElementById('userBadge').classList.remove('hidden');
-                    document.getElementById('badgeNama').innerText = dataAkun.nama;
-                    document.getElementById('labelFase').innerText = stateFase;
-                    
-                    renderInstrumenUI();
-                } else {
-                    regStatus.innerText = "Gagal membuat akun.";
-                    regStatus.className = "text-center text-sm font-medium mt-3 text-red-500";
-                }
-            } catch (error) {
-                regStatus.innerText = "Koneksi terputus. Gagal membuat akun.";
-                regStatus.className = "text-center text-sm font-medium mt-3 text-red-500";
-            } finally {
-                btnDaftar.innerHTML = `<span>Daftar & Mulai Survei</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
-                lucide.createIcons();
-            }
-        }
+function showToast(m, t) {
+  const d = document.createElement("div");
+  d.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl shadow-xl text-white text-sm font-semibold z-50 flex items-center gap-2 animate-[fadeIn_0.3s_ease] ${t === 'error' ? 'bg-red-500' : 'bg-slate-900'}`;
+  d.innerHTML = `<i data-lucide="${t === 'error' ? 'circle-alert' : 'check-circle'}" class="w-4 h-4"></i> ${m}`;
+  document.body.appendChild(d);
+  lucide.createIcons();
+  setTimeout(() => d.remove(), 3000);
+}
 
-        async function kirimSurvei() {
-            const totalPertanyaan = noUrutGlobal - 1;
-            const jawaban = [];
-            
-            for (let i = 1; i <= totalPertanyaan; i++) {
-                const checked = document.querySelector(`input[name="Q${i}"]:checked`);
-                if (!checked) {
-                    alert(`Anda belum menjawab instrumen nomor ${i}. Silakan lengkapi terlebih dahulu.`);
-                    return;
-                }
-                jawaban.push(checked.value);
-            }
+function confirmBackToDashboard() {
+  const filled = Object.keys(jawaban).length;
+  if (filled > 0 && filled < TOTAL_ITEM) {
+    if (!confirm("Jawaban Anda belum lengkap. Yakin ingin kembali ke dashboard?\n\n(Jawaban tersimpan otomatis dan akan dipulihkan saat Anda kembali)")) return;
+  }
+  showScreen("screenDashboard");
+}
 
-            const btnKirim = document.getElementById('btnKirim');
-            btnKirim.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i><span>Menyimpan...</span>`;
-            btnKirim.disabled = true;
-            lucide.createIcons();
+function logout() {
+  currentUser = null; fullData = null;
+  document.getElementById("loginEmail").value = "";
+  showScreen("screenLogin");
+}
 
-            const payload = {
-                action: 'simpanSurvei',
-                email: stateEmail,
-                fase: stateFase,
-                jawaban: jawaban,
-                refleksi1: document.getElementById('refleksi1').value,
-                refleksi2: document.getElementById('refleksi2').value,
-                refleksi3: document.getElementById('refleksi3').value
-            };
+// ================================================================
+//  LOGIN
+// ================================================================
+function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const err = document.getElementById("loginError");
+  err.classList.add("hidden");
+  if (!email) { err.querySelector("span").textContent = "Email wajib diisi"; err.classList.remove("hidden"); refreshIcons(); return; }
 
-            try {
-                const response = await fetch(GAS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(payload)
-                });
+  showLoading("Mengambil data profil...");
+  apiCall({ action: "cekEmail", email })
+    .then(res => {
+      hideLoading();
+      if (res.status !== "success" || !res.data.terdaftar) {
+        err.querySelector("span").textContent = res.message || "Email tidak ditemukan";
+        err.classList.remove("hidden"); refreshIcons(); return;
+      }
+      currentUser = { email, data: res.data };
+      fullData = res.data;
+      renderDashboard();
+      showScreen("screenDashboard");
+    })
+    .catch(() => {
+      hideLoading();
+      err.querySelector("span").textContent = "Gagal koneksi server";
+      err.classList.remove("hidden"); refreshIcons();
+    });
+}
 
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    
-                    let semuaPertanyaan = [];
-                    dataInstrumen.forEach(kat => {
-                        semuaPertanyaan = semuaPertanyaan.concat(kat.pertanyaan);
-                    });
+// ================================================================
+//  DASHBOARD (RESMI)
+// ================================================================
+function renderDashboard() {
+  const u = fullData.userData;
+  
+  // Sapaan resmi
+  document.getElementById("dashGreeting").textContent = `Yth. Bapak/Ibu ${u.nama}`;
+  
+  // Card identitas resmi
+  document.getElementById("dashInitial").textContent = u.nama.charAt(0).toUpperCase();
+  document.getElementById("dashName").textContent = u.nama;
+  document.getElementById("dashSchool").textContent = u.instansi;
+  document.getElementById("dashJabatan").textContent = u.jabatan;
+  document.getElementById("dashWilayah").textContent = `${u.kecamatan}, ${u.kabupaten}, ${u.provinsi}`;
 
-                    let skorBM = 0, skorCM = 0, skorSM = 0;
-                    let listPrioritas = "";
+  const awalDiv = document.getElementById("dashAwalActions");
+  const akhirDiv = document.getElementById("dashAkhirActions");
+  awalDiv.innerHTML = ""; akhirDiv.innerHTML = "";
 
-                    jawaban.forEach((jawab, idx) => {
-                        if (jawab === 'BM') {
-                            skorBM++;
-                            listPrioritas += `<li class="text-sm text-slate-700 mb-2 pb-2 border-b border-slate-200 last:border-0"><span class="inline-block px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold mr-2">BM</span> ${semuaPertanyaan[idx]}</li>`;
-                        } else if (jawab === 'CM') {
-                            skorCM++;
-                            listPrioritas += `<li class="text-sm text-slate-700 mb-2 pb-2 border-b border-slate-200 last:border-0"><span class="inline-block px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold mr-2">CM</span> ${semuaPertanyaan[idx]}</li>`;
-                        } else if (jawab === 'SM') {
-                            skorSM++;
-                        }
-                    });
+  if (fullData.sudahAwal) {
+    awalDiv.innerHTML = `
+      <button onclick="unduhPDF('awal')" class="btn-secondary !py-2 !px-4 text-sm flex-1">
+        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Hasil
+      </button>
+      <div class="flex items-center gap-1 text-green-600 text-xs font-bold bg-green-50 px-3 py-2 rounded-lg">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Selesai
+      </div>`;
+  } else {
+    awalDiv.innerHTML = `<button onclick="startSurvey('Survei Awal')" class="btn-primary !py-2 !px-4 text-sm flex-1">Mulai Survei Awal</button>`;
+  }
 
-                    if (listPrioritas === "") {
-                        listPrioritas = `<li class="text-sm text-emerald-600 font-medium">Luar biasa! Anda sudah sangat mampu menguasai seluruh fitur.</li>`;
-                    }
+  if (fullData.sudahAkhir) {
+    akhirDiv.innerHTML = `
+      <button onclick="unduhPDF('akhir')" class="btn-secondary !py-2 !px-4 text-sm flex-1">
+        <i data-lucide="printer" class="w-4 h-4"></i> Cetak Hasil
+      </button>
+      <div class="flex items-center gap-1 text-green-600 text-xs font-bold bg-green-50 px-3 py-2 rounded-lg">
+        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Selesai
+      </div>`;
+  } else if (fullData.sudahAwal) {
+    akhirDiv.innerHTML = `<button onclick="startSurvey('Survei Akhir')" class="btn-primary !py-2 !px-4 text-sm flex-1">Mulai Survei Akhir</button>`;
+  } else {
+    akhirDiv.innerHTML = `<button disabled class="btn-secondary !py-2 !px-4 text-sm flex-1 opacity-50 cursor-not-allowed">Selesaikan Awal Dulu</button>`;
+  }
+  refreshIcons();
+}
 
-                    document.getElementById('surveySection').innerHTML = `
-                        <div class="bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.05)] border border-slate-100 mt-10 max-w-3xl mx-auto p-6 sm:p-10 fade-in">
-                            <div class="text-center border-b pb-6 mb-6">
-                                <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <i data-lucide="check-circle" class="w-10 h-10 text-emerald-500"></i>
-                                </div>
-                                <h2 class="text-3xl font-bold text-slate-800 mb-2">Survei Berhasil Disimpan!</h2>
-                                <p class="text-slate-500">Berikut adalah ringkasan hasil evaluasi diri Anda pada tahap <b class="text-primary">${stateFase}</b>.</p>
-                            </div>
+// ================================================================
+//  SURVEI
+// ================================================================
+function startSurvey(fase) {
+  currentFase = fase;
+  jawaban = {};
+  document.getElementById("surveyTitle").textContent = fase;
+  
+  // Reset form
+  document.getElementById("refleksi1").value = "";
+  document.getElementById("refleksi2").value = "";
+  document.getElementById("refleksi3").value = "";
+  
+  renderSurveyForm();
+  showScreen("screenSurvey");
+}
 
-                            <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-8 text-center">
-                                <div class="bg-red-50 p-4 rounded-xl border border-red-100">
-                                    <p class="text-3xl font-bold text-red-600">${skorBM}</p>
-                                    <p class="text-xs sm:text-sm font-semibold text-red-700 mt-1">Belum Mampu</p>
-                                </div>
-                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100">
-                                    <p class="text-3xl font-bold text-amber-600">${skorCM}</p>
-                                    <p class="text-xs sm:text-sm font-semibold text-amber-700 mt-1">Cukup Mampu</p>
-                                </div>
-                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100">
-                                    <p class="text-3xl font-bold text-emerald-600">${skorSM}</p>
-                                    <p class="text-xs sm:text-sm font-semibold text-emerald-700 mt-1">Sangat Mampu</p>
-                                </div>
-                            </div>
+function renderSurveyForm() {
+  const c = document.getElementById("surveyContainer");
+  c.innerHTML = "";
+  let idx = 0;
+  INSTRUMEN_FALLBACK.forEach((kat, ki) => {
+    const sec = document.createElement("div"); sec.className = "card overflow-hidden";
+    const hdr = document.createElement("button");
+    hdr.className = "w-full flex items-center justify-between p-5 text-left hover:bg-slate-50 transition";
+    hdr.innerHTML = `<span class="font-bold text-slate-700">${kat.kategori}</span><i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform" id="arr-${ki}"></i>`;
+    hdr.onclick = () => {
+      const b = document.getElementById(`bd-${ki}`), a = document.getElementById(`arr-${ki}`);
+      b.classList.toggle("open");
+      a.style.transform = b.classList.contains("open") ? "rotate(180deg)" : "";
+    };
 
-                            <div class="bg-slate-50 rounded-xl p-5 sm:p-6 border border-slate-200 mb-8">
-                                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-                                    <i data-lucide="target" class="w-5 h-5 text-primary"></i> Area Pengembangan Diri (Prioritas)
-                                </h3>
-                                <div class="max-h-64 overflow-y-auto pr-2">
-                                    <ul class="list-none m-0 p-0">
-                                        ${listPrioritas}
-                                    </ul>
-                                </div>
-                            </div>
+    const bd = document.createElement("div"); bd.id = `bd-${ki}`; bd.className = "acc-body" + (ki === 0 ? " open" : "");
+    const inner = document.createElement("div"); inner.className = "p-5 pt-0 space-y-4 border-t border-slate-100";
 
-                            <div class="text-center">
-                                <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 px-8 rounded-lg transition-colors shadow-lg">
-                                    Selesai & Keluar
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    lucide.createIcons();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    alert("Terjadi kesalahan sistem saat menyimpan data.");
-                }
-            } catch (error) {
-                alert("Gagal terhubung ke server saat mengirim data.");
-            } finally {
-                if(btnKirim) {
-                    btnKirim.innerHTML = `<i data-lucide="send" class="w-5 h-5"></i><span>Kirim & Simpan Data</span>`;
-                    btnKirim.disabled = false;
-                    lucide.createIcons();
-                }
-            }
-        }
-    </script>
+    kat.items.forEach(item => {
+      const myIdx = idx++;
+      const row = document.createElement("div");
+      row.innerHTML = `<p class="text-sm text-slate-600 mb-2 font-medium">${myIdx + 1}. ${item}</p>
+        <div class="grid grid-cols-3 gap-2">
+          <button class="chip" onclick="setAns(${myIdx},'BM',this)"><i data-lucide="x" class="w-3 h-3"></i> Belum</button>
+          <button class="chip" onclick="setAns(${myIdx},'CM',this)"><i data-lucide="minus" class="w-3 h-3"></i> Cukup</button>
+          <button class="chip" onclick="setAns(${myIdx},'SM',this)"><i data-lucide="check" class="w-3 h-3"></i> Sangat</button>
+        </div>`;
+      inner.appendChild(row);
+    });
+    bd.appendChild(inner); sec.appendChild(hdr); sec.appendChild(bd); c.appendChild(sec);
+  });
+  
+  // Auto-save event listener untuk refleksi
+  let saveTimeout;
+  ["refleksi1", "refleksi2", "refleksi3"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveToLocal, 500);
+      });
+    }
+  });
+  
+  updateProg();
+  refreshIcons();
+  
+  // Pulihkan draft dari localStorage
+  loadFromLocal();
+}
+
+function setAns(i, v, b) {
+  jawaban[i] = v;
+  b.parentElement.querySelectorAll(".chip").forEach(c => c.classList.remove("active-BM", "active-CM", "active-SM"));
+  b.classList.add("active-" + v);
+  updateProg();
+  saveToLocal();
+}
+
+function updateProg() {
+  const f = Object.keys(jawaban).length;
+  document.getElementById("progressText").textContent = `${f}/${TOTAL_ITEM}`;
+  document.getElementById("progressBar").style.width = (f / TOTAL_ITEM * 100) + "%";
+}
+
+// ================================================================
+//  SUBMIT SURVEI
+// ================================================================
+function handleSubmitSurvey() {
+  const f = Object.keys(jawaban).length;
+  if (f < TOTAL_ITEM) { showToast(`${TOTAL_ITEM - f} item belum dijawab`, "error"); return; }
+  const r1 = document.getElementById("refleksi1").value.trim();
+  const r2 = document.getElementById("refleksi2").value.trim();
+  const r3 = document.getElementById("refleksi3").value.trim();
+  if (!r1 || !r2 || !r3) { showToast("Refleksi wajib diisi", "error"); return; }
+  if (!confirm("Yakin ingin mengirim jawaban?\n\nJawaban tidak dapat diubah setelah dikirim.")) return;
+
+  const arr = []; for (let i = 0; i < TOTAL_ITEM; i++) arr.push(jawaban[i] || "");
+  showLoading("Menyimpan data...");
+  apiCall({ action: "simpanSurvei", email: currentUser.email, fase: currentFase, jawaban: arr, refleksi1: r1, refleksi2: r2, refleksi3: r3 })
+    .then(r => {
+      hideLoading();
+      if (r.status === "success") {
+        showToast("Berhasil disimpan!", "success");
+        clearLocalDraft();
+        apiCall({ action: "cekEmail", email: currentUser.email }).then(r2 => {
+          if (r2.status === "success") { fullData = r2.data; renderDashboard(); showScreen("screenDashboard"); }
+        });
+      } else showToast(r.message, "error");
+    })
+    .catch(() => { hideLoading(); showToast("Gagal mengirim", "error"); });
+}
+
+// ================================================================
+//  REGISTER
+// ================================================================
+function handleRegister() {
+  const e = document.getElementById("regEmail").value.trim();
+  const n = document.getElementById("regNama").value.trim();
+  const i = document.getElementById("regInstansi").value.trim();
+  if (!e || !n || !i) { showToast("Lengkapi data wajib", "error"); return; }
+  showLoading("Mendaftar...");
+  apiCall({
+    action: "simpanAkun", email: e, nama: n, instansi: i,
+    jabatan: document.getElementById("regJabatan").value,
+    kecamatan: document.getElementById("regKecamatan").value,
+    kabupaten: document.getElementById("regKabupaten").value,
+    provinsi: document.getElementById("regProvinsi").value
+  })
+    .then(r => { hideLoading(); if (r.status === "success") { showToast("Berhasil! Silakan login", "success"); showScreen("screenLogin"); } else { showToast(r.message, "error"); } })
+    .catch(() => { hideLoading(); showToast("Gagal koneksi", "error"); });
+}
+
+// ================================================================
+//  PDF GENERATION (FORMAT LEMBAR KERJA — TANPA TANDA TANGAN)
+// ================================================================
+async function unduhPDF(mode) {
+  if (!fullData) return;
+  if (mode === "awal" && !fullData.sudahAwal) { showToast("Data Survei Awal belum tersedia", "error"); return; }
+  if (mode === "akhir" && !fullData.sudahAkhir) { showToast("Data Survei Akhir belum tersedia", "error"); return; }
+
+  showLoading("Menyiapkan Lembar Kerja PDF...");
+
+  const serverInstrumen = await fetchInstrumen();
+
+  const c = document.getElementById("pdfContainer");
+  c.innerHTML = "";
+  c.appendChild(buildPdfLembarKerja(mode, serverInstrumen));
+  c.style.display = "block";
+
+  const nm = mode === "awal" ? "Lembar_Kerja_Awal_" : "Lembar_Kerja_Akhir_";
+  html2pdf().set({
+    margin: [10, 10, 10, 10],
+    filename: nm + fullData.userData.nama.replace(/[^a-zA-Z0-9]/g, "_") + ".pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    pagebreak: { mode: ["css", "legacy"], avoid: ".avoid-break" }
+  }).from(c).save()
+    .then(() => { c.style.display = "none"; hideLoading(); showToast("Lembar Kerja PDF berhasil diunduh", "success"); })
+    .catch(e => { c.style.display = "none"; hideLoading(); showToast("Gagal membuat PDF: " + e, "error"); });
+}
+
+function buildPdfLembarKerja(mode, serverInstrumen) {
+  const d = fullData;
+  const u = d.userData;
+  const jawabanArr = mode === "awal" ? d.jawabanAwal : d.jawabanAkhir;
+  const ref = mode === "awal" ? d.refleksiAwal : d.refleksiAkhir;
+  const tanggal = mode === "awal" ? d.waktuAwal : d.waktuAkhir;
+  const judulFase = mode === "awal" ? "SURVEI AWAL" : "SURVEI AKHIR";
+
+  const instr = serverInstrumen || INSTRUMEN_FALLBACK;
+
+  const div = document.createElement("div");
+  div.style.cssText = "font-family:'Times New Roman', Times, serif; font-size:12px; color:#000; line-height:1.4; padding:5px;";
+
+  let h = "";
+
+  // HEADER
+  h += `<div style="text-align:center; margin-bottom:15px;" class="avoid-break">
+    <h1 style="font-size:16px; font-weight:bold; margin:0; text-transform:uppercase; text-decoration:underline;">LEMBAR KERJA EKSPLORASI PERANGKAT DIGITAL</h1>
+    <p style="font-size:13px; margin:4px 0 0; font-weight:bold;">(${judulFase})</p>
+  </div>`;
+
+  // IDENTITAS
+  h += `<table style="width:100%; margin-bottom:15px; font-size:12px;" class="avoid-break">
+    <tr><td style="width:120px;">Nama</td><td style="width:10px;">:</td><td>${u.nama}</td></tr>
+    <tr><td>Asal Sekolah</td><td>:</td><td>${u.instansi}</td></tr>
+    <tr><td>Jabatan</td><td>:</td><td>${u.jabatan}</td></tr>
+    <tr><td>Kecamatan/Kab</td><td>:</td><td>${u.kecamatan}, ${u.kabupaten}</td></tr>
+    <tr><td>Tanggal Pengisian</td><td>:</td><td>${tanggal}</td></tr>
+  </table>`;
+
+  // TABEL CHECKLIST
+  h += `<table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:20px;">
+    <thead>
+      <tr style="background:#f0f0f0; border:1px solid #000;">
+        <th style="border:1px solid #000; padding:6px; width:30px; text-align:center;">No</th>
+        <th style="border:1px solid #000; padding:6px; text-align:left;">Fitur / Kompetensi Eksplorasi</th>
+        <th style="border:1px solid #000; padding:6px; width:45px; text-align:center;">BM</th>
+        <th style="border:1px solid #000; padding:6px; width:45px; text-align:center;">CM</th>
+        <th style="border:1px solid #000; padding:6px; width:45px; text-align:center;">SM</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  let idx = 0;
+  instr.forEach((kat) => {
+    h += `<tr class="avoid-break" style="background:#e8e8e8; font-weight:bold; font-style:italic;">
+      <td colspan="5" style="border:1px solid #000; padding:5px 8px;">${kat.kategori}</td>
+    </tr>`;
+    kat.items.forEach((item) => {
+      const ans = (jawabanArr[idx] || "").toUpperCase();
+      const bm = ans === "BM" ? "✓" : "";
+      const cm = ans === "CM" ? "✓" : "";
+      const sm = ans === "SM" ? "✓" : "";
+      h += `<tr class="avoid-break">
+        <td style="border:1px solid #000; padding:4px; text-align:center;">${idx + 1}</td>
+        <td style="border:1px solid #000; padding:4px 8px;">${item}</td>
+        <td style="border:1px solid #000; padding:4px; text-align:center; font-size:14px; font-weight:bold;">${bm}</td>
+        <td style="border:1px solid #000; padding:4px; text-align:center; font-size:14px; font-weight:bold;">${cm}</td>
+        <td style="border:1px solid #000; padding:4px; text-align:center; font-size:14px; font-weight:bold;">${sm}</td>
+      </tr>`;
+      idx++;
+    });
+  });
+  h += `</tbody></table>`;
+
+  // RINGKASAN SKOR
+  const skor = mode === "awal" ? d.skorAwal : d.skorAkhir;
+  h += `<div style="margin-bottom:20px; font-size:12px; font-weight:bold; border:1px solid #000; padding:8px; border-radius:4px; background:#fafafa;" class="avoid-break">
+    RINGKASAN: Belum Mampu (BM): ${skor.BM} &nbsp;|&nbsp; Cukup Mampu (CM): ${skor.CM} &nbsp;|&nbsp; Sangat Mampu (SM): ${skor.SM}
+  </div>`;
+
+  // REFLEKSI DIRI
+  h += `<div class="avoid-break" style="margin-top:10px;">
+    <h3 style="font-size:13px; font-weight:bold; margin-bottom:10px; border-bottom:2px solid #000; display:inline-block; padding-bottom:2px;">REFLEKSI DIRI</h3>
+    <p style="margin:15px 0 5px; font-weight:bold;">1. Pemahaman baru apa yang Anda peroleh selama menggunakan perangkat digital?</p>
+    <div style="border-bottom:1px dotted #999; min-height:25px; padding:2px 0; font-style:italic;">${ref.r1 || ""}</div>
+    <p style="margin:15px 0 5px; font-weight:bold;">2. Fitur apa yang menjadi prioritas untuk dipelajari kembali?</p>
+    <div style="border-bottom:1px dotted #999; min-height:25px; padding:2px 0; font-style:italic;">${ref.r2 || ""}</div>
+    <p style="margin:15px 0 5px; font-weight:bold;">3. Apa komitmen tindakan nyata Anda dalam dua minggu ke depan?</p>
+    <div style="border-bottom:1px dotted #999; min-height:25px; padding:2px 0; font-style:italic;">${ref.r3 || ""}</div>
+  </div>`;
+
+  // TANPA TANDA TANGAN (sesuai permintaan)
+
+  div.innerHTML = h;
+  return div;
+}
+</script>
 </body>
 </html>
